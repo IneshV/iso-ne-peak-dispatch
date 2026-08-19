@@ -1,0 +1,25 @@
+{
+  "best_model": "ridge_10",
+  "residual_std_mw": 677.7095017761472,
+  "train_end": "2024-12-31",
+  "test_year": 2025,
+  "features": [
+    "temp_max_f",
+    "temp_min_f",
+    "temp_mean_f",
+    "humidity_mean_pct",
+    "dew_point_max_f",
+    "apparent_temp_max_f",
+    "cooling_degrees",
+    "heating_degrees",
+    "temp_sq",
+    "sin_doy",
+    "cos_doy",
+    "lag_1_peak_mw",
+    "lag_7_peak_mw",
+    "rolling_7_peak_mw",
+    "is_weekend",
+    "month",
+    "dayofweek"
+  ]
+}

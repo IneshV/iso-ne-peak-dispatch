@@ -1,0 +1,15 @@
+{
+  "battery_mw": 5.0,
+  "duration_hours": 4.0,
+  "efficiency": 0.9,
+  "peak_value_per_kw_month": 25.0,
+  "max_dispatches_per_month": 5,
+  "months": 12,
+  "monthly_peaks_captured": 11,
+  "capture_rate": 0.9166666666666666,
+  "dispatches": 60,
+  "false_dispatches": 49,
+  "gross_savings_usd": 1237500.0,
+  "dispatch_cost_usd": 60000.0,
+  "net_savings_usd": 1177500.0
+}
