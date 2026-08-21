@@ -1,6 +1,7 @@
 __pycache__/
 .DS_Store
 .venv/
+ISO-NE-Peak-Demand-Project/
 
 data/raw/
 data/processed/
