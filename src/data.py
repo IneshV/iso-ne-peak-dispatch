@@ -6,6 +6,7 @@ import urllib.parse
 from pathlib import Path
 
 import pandas as pd
+from pandas.tseries.holiday import USFederalHolidayCalendar
 
 
 CITIES = {
@@ -16,6 +17,8 @@ CITIES = {
     "portland_me": (43.6591, -70.2568),
     "burlington_vt": (44.4759, -73.2121),
 }
+
+FORECAST_ARCHIVE_START = "2021-03-23"
 
 
 def parse_eei_file(path: Path) -> pd.DataFrame:
@@ -66,13 +69,15 @@ def build_hourly_load(raw_dir: Path) -> pd.DataFrame:
 
 
 def download_weather(output_path: Path, start: str, end: str) -> pd.DataFrame:
-    endpoint = "https://archive-api.open-meteo.com/v1/archive"
+    endpoint = "https://previous-runs-api.open-meteo.com/v1/forecast"
+    start = max(start, FORECAST_ARCHIVE_START)
     params = {
         "latitude": ",".join(str(coords[0]) for coords in CITIES.values()),
         "longitude": ",".join(str(coords[1]) for coords in CITIES.values()),
         "start_date": start,
         "end_date": end,
-        "hourly": "temperature_2m,relative_humidity_2m,dew_point_2m,apparent_temperature",
+        "hourly": "temperature_2m_previous_day1",
+        "models": "gfs_seamless",
         "timezone": "America/New_York",
     }
     url = f"{endpoint}?{urllib.parse.urlencode(params)}"
@@ -87,7 +92,10 @@ def download_weather(output_path: Path, start: str, end: str) -> pd.DataFrame:
     frames = []
     for city, city_payload in zip(CITIES, payloads):
         hourly = city_payload["hourly"]
-        frame = pd.DataFrame(hourly).rename(columns={"time": "timestamp_local"})
+        frame = pd.DataFrame(hourly).rename(columns={
+            "time": "timestamp_local",
+            "temperature_2m_previous_day1": "temperature_2m",
+        })
         frame["timestamp_local"] = pd.to_datetime(frame["timestamp_local"])
         frame["city"] = city
         frames.append(frame)
@@ -98,6 +106,7 @@ def download_weather(output_path: Path, start: str, end: str) -> pd.DataFrame:
 
 
 def load_or_download_weather(output_path: Path, start: str, end: str) -> pd.DataFrame:
+    start = max(start, FORECAST_ARCHIVE_START)
     if output_path.exists():
         weather = pd.read_csv(output_path, parse_dates=["timestamp_local"])
         if weather["timestamp_local"].min() <= pd.Timestamp(start) and weather["timestamp_local"].max() >= pd.Timestamp(end):
@@ -118,9 +127,6 @@ def build_daily_dataset(load: pd.DataFrame, weather: pd.DataFrame) -> pd.DataFra
         weather.groupby("timestamp_local")
         .agg(
             temperature_f=("temperature_2m", lambda x: x.mean() * 9 / 5 + 32),
-            humidity_pct=("relative_humidity_2m", "mean"),
-            dew_point_f=("dew_point_2m", lambda x: x.mean() * 9 / 5 + 32),
-            apparent_temperature_f=("apparent_temperature", lambda x: x.mean() * 9 / 5 + 32),
         )
         .reset_index()
     )
@@ -131,13 +137,16 @@ def build_daily_dataset(load: pd.DataFrame, weather: pd.DataFrame) -> pd.DataFra
             temp_max_f=("temperature_f", "max"),
             temp_min_f=("temperature_f", "min"),
             temp_mean_f=("temperature_f", "mean"),
-            humidity_mean_pct=("humidity_pct", "mean"),
-            dew_point_max_f=("dew_point_f", "max"),
-            apparent_temp_max_f=("apparent_temperature_f", "max"),
+            forecast_hour_count=("temperature_f", "count"),
         )
         .reset_index()
     )
-    daily = daily_load.merge(daily_weather, on="operating_date", how="inner").sort_values("operating_date")
+    daily_weather = daily_weather[daily_weather["forecast_hour_count"] == 24].drop(
+        columns="forecast_hour_count"
+    )
+    # Preserve the complete calendar before constructing lags. Missing forecast
+    # days must remain gaps rather than making nonadjacent load days look adjacent.
+    daily = daily_load.merge(daily_weather, on="operating_date", how="left").sort_values("operating_date")
     daily["year"] = daily["operating_date"].dt.year
     daily["month"] = daily["operating_date"].dt.month
     daily["dayofweek"] = daily["operating_date"].dt.dayofweek
@@ -151,6 +160,36 @@ def build_daily_dataset(load: pd.DataFrame, weather: pd.DataFrame) -> pd.DataFra
     daily["lag_1_peak_mw"] = daily["peak_load_mw"].shift(1)
     daily["lag_7_peak_mw"] = daily["peak_load_mw"].shift(7)
     daily["rolling_7_peak_mw"] = daily["peak_load_mw"].shift(1).rolling(7).mean()
+
+    # ISO-NE's published peak-load methodology uses nonlinear weather,
+    # multi-day weather response, holiday/weekend flags, and autoregressive
+    # errors. These features reproduce those ideas without using future load.
+    holiday_dates = USFederalHolidayCalendar().holidays(
+        start=daily["operating_date"].min(), end=daily["operating_date"].max()
+    )
+    daily["is_holiday"] = daily["operating_date"].isin(holiday_dates).astype(int)
+    daily["is_business_day"] = (
+        (daily["dayofweek"] < 5) & (daily["is_holiday"] == 0)
+    ).astype(int)
+    daily["trend_days"] = (
+        daily["operating_date"] - daily["operating_date"].min()
+    ).dt.days
+
+    for lag in (2, 3, 14, 21, 28):
+        daily[f"lag_{lag}_peak_mw"] = daily["peak_load_mw"].shift(lag)
+    for window in (3, 14, 28):
+        history = daily["peak_load_mw"].shift(1).rolling(window)
+        daily[f"rolling_{window}_mean_mw"] = history.mean()
+        daily[f"rolling_{window}_std_mw"] = history.std()
+        daily[f"rolling_{window}_max_mw"] = history.max()
+
+    daily["weighted_temp_3d_f"] = (
+        10 * daily["temp_max_f"]
+        + 5 * daily["temp_max_f"].shift(1)
+        + 2 * daily["temp_max_f"].shift(2)
+    ) / 17
+    daily["cooling_sq"] = daily["cooling_degrees"] ** 2
+    daily["heating_sq"] = daily["heating_degrees"] ** 2
     return daily.dropna().reset_index(drop=True)
 
 
