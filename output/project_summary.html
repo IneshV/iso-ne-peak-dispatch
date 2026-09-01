@@ -59,15 +59,15 @@
 <body>
 <main class="page">
   <header>
-    <div class="eyebrow">Independent project summary</div>
+    <div class="eyebrow">MMWEC project summary</div>
     <h1>Forecasting ISO New England Peak Demand</h1>
     <div class="byline"><strong>Inesh A. Vytheswaran</strong><span>September 2026</span></div>
   </header>
 
   <section class="metrics" aria-label="Key results">
-    <div class="metric"><strong>462 MW</strong><span>mean absolute error across 2022 through 2024 validation</span></div>
+    <div class="metric"><strong>460 MW</strong><span>mean absolute error across 2022 through 2024 validation</span></div>
     <div class="metric"><strong>12 of 12</strong><span>monthly peaks captured with 3 dispatches per month</span></div>
-    <div class="metric"><strong>424 MW</strong><span>2025 daily peak mean absolute error</span></div>
+    <div class="metric"><strong>421 MW</strong><span>2025 daily peak mean absolute error</span></div>
   </section>
 
   <section class="columns">
@@ -82,15 +82,15 @@
       </div>
       <div class="block">
         <h2>Evaluation</h2>
-        <p>I compared several models using validation with expanding training windows to determine which performed best across 2022 through 2024. Each validation year was predicted using only data from prior years. After selecting the best model, I evaluated it on 2025 data reserved for testing and not used to fit the model. The selected ensemble combines 75% gradient boosting with 25% Ridge regression. It had the lowest validation error and achieved a 424 MW MAE in the retrospective 2025 evaluation.</p>
+        <p>I compared several models using validation with expanding training windows to determine which performed best across 2022 through 2024. Each validation year was predicted using only data from prior years. After selecting the best model, I evaluated it on 2025 data reserved for testing and not used to fit the model. The selected ensemble combines 75% gradient boosting with 25% Ridge regression. It had the lowest validation error and achieved a 421 MW MAE in the retrospective 2025 evaluation.</p>
       </div>
     </div>
     <div class="decision">
       <h2>From forecast to dispatch</h2>
-      <p>For each completed month in 2025, I ranked days by predicted peak. The single highest forecast captured 9 of 12 monthly peaks, two candidate days captured 10 of 12, and three candidate days captured all 12. The fourth and fifth selections added no benefit in this backtest.</p>
+      <p>For each completed month in 2025, I ranked days by predicted peak. The single highest forecast captured 8 of 12 monthly peaks, while two candidate days captured all 12. A third selection added no benefit in this backtest.</p>
       <div class="calls" aria-label="Monthly peak capture by allowed selections">
-        <div class="call-row"><span>1 selection</span><div class="bar"><div class="fill" style="width:75.0%"></div></div><b>9/12</b></div>
-        <div class="call-row"><span>2 selections</span><div class="bar"><div class="fill" style="width:83.3%"></div></div><b>10/12</b></div>
+        <div class="call-row"><span>1 selection</span><div class="bar"><div class="fill" style="width:66.7%"></div></div><b>8/12</b></div>
+        <div class="call-row"><span>2 selections</span><div class="bar"><div class="fill" style="width:100.0%"></div></div><b>12/12</b></div>
         <div class="call-row"><span>3 selections</span><div class="bar"><div class="fill" style="width:100.0%"></div></div><b>12/12</b></div>
       </div>
     </div>
@@ -109,7 +109,7 @@
       <text x="483.0" y="225" text-anchor="middle">Operating month</text>
       <text x="13" y="100.0" text-anchor="middle" transform="rotate(-90 13 100.0)">Daily peak load (MW)</text>
     </svg>
-    <figcaption>Retrospective 2025 evaluation. The model follows seasonal demand patterns and identified four of the year's five highest load days among its five highest forecasts.</figcaption>
+    <figcaption>Retrospective 2025 Evaluation: The model follows seasonal and daily demand patterns well. The model very rarley over predicts daily peak load.</figcaption>
   </figure>
 
   <section class="bottom">
@@ -119,11 +119,11 @@
     </div>
     <div>
       <h2>Limitations</h2>
-      <p>The model predicts total electricity demand across New England rather than demand for a specific municipal utility. It predicts daily peak magnitude and ranks likely peak days, but it does not predict the hour of the peak. The dispatch test selects each month's three highest forecasts after the month is complete. A real operating strategy would need to decide whether to dispatch each day without knowing the forecasts or conditions for the rest of the month. The test also does not account for operating costs or limits on dispatch availability, including charging time, state of charge, degradation, outages, or maximum cycle limits.</p>
+      <p>The model predicts total electricity demand across New England rather than demand for a specific municipal utility. It predicts daily peak magnitude and ranks likely peak days, but it does not predict the hour of the peak. The dispatch test selects each month's three highest forecasts after the month is complete. A real operating strategy would need to decide whether to dispatch each day without knowing the forecasts or conditions for the rest of the month. The test also does not consider operating costs or limititations on dispatch such as charging time, state of charge, degradation, outages, or maximum cycle limits.</p>
     </div>
     <div>
       <h2>Future improvements</h2>
-      <p>Given more time, I would add archived humidity, dew point, and apparent temperature forecasts, build a separate model for the intraday peak hour, and produce prediction intervals rather than a single point forecast. I would then test a sequential dispatch rule using load data from the utility, battery state of charge, degradation costs, the billing rules that determine which regional peaks affect the utility's costs, and only the information available before each operating decision.</p>
+      <p>Given more time, I would first add the actual archived values for variables such as humidity, dew point, and temperature in addition to their forecasts.  Also, I would build a separate model for the intraday peak hour, and produce prediction intervals rather than a single point forecast. I would then test a sequential dispatch rule using load data from the utility, battery state of charge, degradation costs, the billing rules that determine which regional peaks affect the utility's costs, and any other the information available before each operating decision.</p>
     </div>
   </section>
 
