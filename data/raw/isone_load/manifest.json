@@ -1,0 +1,74 @@
+[
+  {
+    "year": 2015,
+    "source_url": "https://www.iso-ne.com/static-assets/documents/2015/02/2015_eei_loads.txt",
+    "iso_ne_publish_date": "05/12/2016 12:00 AM EDT",
+    "local_file": "data/raw/isone_load/2015_eei_loads.txt"
+  },
+  {
+    "year": 2016,
+    "source_url": "https://www.iso-ne.com/static-assets/documents/2016/02/2016_eei_loads.txt",
+    "iso_ne_publish_date": "05/16/2017 12:00 AM EDT",
+    "local_file": "data/raw/isone_load/2016_eei_loads.txt"
+  },
+  {
+    "year": 2017,
+    "source_url": "https://www.iso-ne.com/static-assets/documents/2017/02/2017_eei_loads.txt",
+    "iso_ne_publish_date": "05/17/2018 12:00 AM EDT",
+    "local_file": "data/raw/isone_load/2017_eei_loads.txt"
+  },
+  {
+    "year": 2018,
+    "source_url": "https://www.iso-ne.com/static-assets/documents/2018/02/2018_eei_loads.txt",
+    "iso_ne_publish_date": "12/18/2019 12:00 AM EST",
+    "local_file": "data/raw/isone_load/2018_eei_loads.txt"
+  },
+  {
+    "year": 2019,
+    "source_url": "https://www.iso-ne.com/static-assets/documents/2019/02/2019_eei_loads.txt",
+    "iso_ne_publish_date": "10/16/2020 12:00 AM EDT",
+    "local_file": "data/raw/isone_load/2019_eei_loads.txt"
+  },
+  {
+    "year": 2020,
+    "source_url": "https://www.iso-ne.com/static-assets/documents/2020/02/2020_eei_loads.txt",
+    "iso_ne_publish_date": "11/19/2021 12:00 AM EST",
+    "local_file": "data/raw/isone_load/2020_eei_loads.txt"
+  },
+  {
+    "year": 2021,
+    "source_url": "https://www.iso-ne.com/static-assets/documents/2021/02/2021_eei_loads.txt",
+    "iso_ne_publish_date": "11/18/2022 12:00 AM EST",
+    "local_file": "data/raw/isone_load/2021_eei_loads.txt"
+  },
+  {
+    "year": 2022,
+    "source_url": "https://www.iso-ne.com/static-assets/documents/2022/02/2022_eei_loads.txt",
+    "iso_ne_publish_date": "10/20/2023 12:00 AM EDT",
+    "local_file": "data/raw/isone_load/2022_eei_loads.txt"
+  },
+  {
+    "year": 2023,
+    "source_url": "https://www.iso-ne.com/static-assets/documents/2023/02/2023_eei_loads.txt",
+    "iso_ne_publish_date": "11/15/2024 12:00 AM EST",
+    "local_file": "data/raw/isone_load/2023_eei_loads.txt"
+  },
+  {
+    "year": 2024,
+    "source_url": "https://www.iso-ne.com/static-assets/documents/100008/2024_eei_loads.txt",
+    "iso_ne_publish_date": "11/14/2025 12:00 AM EST",
+    "local_file": "data/raw/isone_load/2024_eei_loads.txt"
+  },
+  {
+    "year": 2025,
+    "source_url": "https://www.iso-ne.com/static-assets/documents/100020/2025_eei_loads.txt",
+    "iso_ne_publish_date": "08/14/2026 12:00 AM EDT",
+    "local_file": "data/raw/isone_load/2025_eei_loads.txt"
+  },
+  {
+    "year": 2026,
+    "source_url": "https://www.iso-ne.com/static-assets/documents/100032/2026_eei_loads.txt",
+    "iso_ne_publish_date": "08/14/2026 04:37 PM EDT",
+    "local_file": "data/raw/isone_load/2026_eei_loads.txt"
+  }
+]
